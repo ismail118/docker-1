@@ -1,0 +1,48 @@
+version: "3.7"
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 33061:3306
+    networks:
+      - golang_network
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=my_golang_app
+    volumes:
+      - mysql_data:/var/lib/mysql
+  redis:
+    container_name: redis
+    image: redis:5
+    ports:
+      - 63791:6379
+    networks:
+      - golang_network
+  menggunakan-docker-compose:
+    container_name: menggunakan-docker-compose
+    image: ismail118/menggunakan-docker-compose:1.0
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
+      - mysql
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - APP_NAME=ApkGw
+    networks:
+      - golang_network
+
+networks:
+  golang_network:
+    name: golang_network
+
+volumes:
+  mysql_data:
+    name: mysql_data
+    driver: local
